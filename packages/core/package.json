@@ -1,0 +1,35 @@
+{
+  "name": "promptquill-core",
+  "version": "1.0.0",
+  "description": "Zero-dependency prompt evaluation engine — scores, anti-patterns, adversarial tests, rewrites. JS/Python parity.",
+  "main": "promptquill-core.js",
+  "module": "promptquill-core.js",
+  "browser": "promptquill-core.js",
+  "files": [
+    "promptquill-core.js",
+    "promptquill-rules.json",
+    "README.md"
+  ],
+  "keywords": [
+    "prompt",
+    "llm",
+    "evaluation",
+    "scoring",
+    "anti-patterns",
+    "adversarial",
+    "rewriter",
+    "prompt-engineering",
+    "promptquill"
+  ],
+  "license": "MIT",
+  "author": "j0sp0nc3",
+  "homepage": "https://github.com/j0sp0nc3/promptquill#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/j0sp0nc3/promptquill.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/j0sp0nc3/promptquill/issues"
+  }
+}
