@@ -1,13 +1,13 @@
 {
-  "name": "promptquill-core",
+  "name": "promptometer-core",
   "version": "1.0.0",
   "description": "Zero-dependency prompt evaluation engine — scores, anti-patterns, adversarial tests, rewrites. JS/Python parity.",
-  "main": "promptquill-core.js",
-  "module": "promptquill-core.js",
-  "browser": "promptquill-core.js",
+  "main": "promptometer-core.js",
+  "module": "promptometer-core.js",
+  "browser": "promptometer-core.js",
   "files": [
-    "promptquill-core.js",
-    "promptquill-rules.json",
+    "promptometer-core.js",
+    "promptometer-rules.json",
     "README.md"
   ],
   "keywords": [
@@ -19,17 +19,17 @@
     "adversarial",
     "rewriter",
     "prompt-engineering",
-    "promptquill"
+    "promptometer"
   ],
   "license": "MIT",
   "author": "j0sp0nc3",
-  "homepage": "https://github.com/j0sp0nc3/promptquill#readme",
+  "homepage": "https://github.com/j0sp0nc3/promptometer#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/j0sp0nc3/promptquill.git",
+    "url": "https://github.com/j0sp0nc3/promptometer.git",
     "directory": "packages/core"
   },
   "bugs": {
-    "url": "https://github.com/j0sp0nc3/promptquill/issues"
+    "url": "https://github.com/j0sp0nc3/promptometer/issues"
   }
 }

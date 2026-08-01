@@ -1,5 +1,5 @@
 # ============================================================================
-# PromptQuill Core — Python Native Library (Zero Dependencies)
+# Promptometer Core — Python Native Library (Zero Dependencies)
 # Standalone evaluation & prompt engineering engine for Python projects.
 #
 # Output contract: matches the JS core (camelCase keys) so any client that
@@ -11,8 +11,9 @@ import re
 from typing import Dict, Any, List
 
 
-class PromptQuillCore:
+class PromptometerCore:
     VERSION = "1.0.0"
+
 
     # ──────────────────────────────────────────────────────────────────────
     # Signals: every derived cue is computed exactly once here, mirroring
@@ -223,7 +224,8 @@ class PromptQuillCore:
 
 
 # Standard module-level exports (callable without instantiating the class).
-analyze = PromptQuillCore.analyze
-improve = PromptQuillCore.improve
-run_adversarial = PromptQuillCore.run_adversarial
-VERSION = PromptQuillCore.VERSION
+analyze = PromptometerCore.analyze
+improve = PromptometerCore.improve
+run_adversarial = PromptometerCore.run_adversarial
+VERSION = PromptometerCore.VERSION
+

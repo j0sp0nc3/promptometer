@@ -1,5 +1,5 @@
 [project]
-name = "promptquill-core"
+name = "promptometer-core"
 version = "1.0.0"
 description = "Zero-dependency prompt evaluation engine — scores, anti-patterns, adversarial tests, rewrites."
 readme = "README.md"
@@ -12,7 +12,7 @@ keywords = [
     "evaluation",
     "scoring",
     "prompt-engineering",
-    "promptquill",
+    "promptometer",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -25,13 +25,16 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/j0sp0nc3/promptquill"
-Repository = "https://github.com/j0sp0nc3/promptquill"
-Issues = "https://github.com/j0sp0nc3/promptquill/issues"
+Homepage = "https://github.com/j0sp0nc3/promptometer"
+Repository = "https://github.com/j0sp0nc3/promptometer"
+Issues = "https://github.com/j0sp0nc3/promptometer/issues"
 
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-py-modules = ["promptquill_core"]
+py-modules = ["promptometer_core"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json"]

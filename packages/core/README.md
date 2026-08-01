@@ -1,20 +1,20 @@
-# PromptQuill Core
+# Promptometer Core
 
-The reusable engine that powers PromptQuill — a prompt-analysis toolkit that
+The reusable engine that powers Promptometer — a prompt-analysis toolkit that
 scores prompts across 8 dimensions, detects anti-patterns, runs adversarial
 tests and produces improved rewrites.
 
 This folder is designed to be **extractable as an independent library**
-(`packages/core/` in the future monorepo) so any application — web, CLI,
+(`packages/core/` in the monorepo) so any application — web, CLI,
 server, or third-party tool — can consume the same evaluation engine.
 
 ## Files
 
 | File | Role |
 |------|------|
-| `promptquill-core.js` | Universal JS library (UMD / ESM / CommonJS). Works in browsers, Node, Deno, Bun. **Zero dependencies.** |
-| `promptquill_core.py` | Native Python port. **Zero dependencies** (stdlib only). Drop into any Python project. |
-| `promptquill-rules.json` | Declarative weights & simple rule definitions. Intended as a shared config surface so weights can be tuned in one place. |
+| `promptometer-core.js` | Universal JS library (UMD / ESM / CommonJS). Works in browsers, Node, Deno, Bun. **Zero dependencies.** |
+| `promptometer_core.py` | Native Python port. **Zero dependencies** (stdlib only). Drop into any Python project. |
+| `promptometer-rules.json` | Declarative weights & simple rule definitions. Intended as a shared config surface so weights can be tuned in one place. |
 
 ## Output contract (identical across JS and Python)
 
@@ -48,11 +48,11 @@ Both implementations return the **same camelCase shape**:
 ### JavaScript / Node
 
 ```js
-const PromptQuillCore = require('./lib/promptquill-core.js');
+const PromptometerCore = require('promptometer-core');
 
-const analysis   = PromptQuillCore.analyze("Your prompt here");
-const improved   = PromptQuillCore.improve("Your prompt here", analysis);
-const adversarial = PromptQuillCore.runAdversarial("Your prompt here");
+const analysis   = PromptometerCore.analyze("Your prompt here");
+const improved   = PromptometerCore.improve("Your prompt here", analysis);
+const adversarial = PromptometerCore.runAdversarial("Your prompt here");
 
 console.log(analysis.overallScore);   // 46
 console.log(analysis.dimensions);     // { clarity: {…}, specificity: {…}, ... }
@@ -61,9 +61,7 @@ console.log(analysis.dimensions);     // { clarity: {…}, specificity: {…}, .
 ### Python
 
 ```python
-import sys
-sys.path.insert(0, "lib")
-import promptquill_core as pf
+import promptometer_core as pf
 
 analysis    = pf.analyze("Your prompt here")
 improved    = pf.improve("Your prompt here", analysis)
@@ -91,10 +89,10 @@ The JS and Python ports are kept in sync. A cross-test verifies that the same
 prompt yields the same `overallScore`, `grade`, `promptType`, per-dimension
 scores, findings, anti-patterns and suggestions in both languages.
 
-## Scope (honest)
+## Scope
 
 This core is a **simplified, dependency-free port** of the full web engine.
-The web app (`js/` at the repo root) has the complete catalogue:
+The web app has the complete catalogue:
 30+ anti-patterns, 15 best practices, 13 adversarial tests, full i18n
 (ES/EN). The core packages ship the most impactful subset (5 anti-patterns,
 3 adversarial tests) to keep them small and zero-dep. The weights and signal

@@ -1,8 +1,8 @@
 /**
- * PromptQuill Core — Universal JS Library (Zero Dependencies)
+ * Promptometer Core — Universal JS Library (Zero Dependencies)
  * UMD / ESM / CommonJS wrapper. Works in browsers, Node, Deno, Bun.
  *
- * Output contract: matches promptquill_core.py (camelCase keys) so any
+ * Output contract: matches promptometer_core.py (camelCase keys) so any
  * client that consumes the REST API gets the same shape regardless of
  * which language implements the server.
  */
@@ -12,9 +12,10 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    root.PromptQuillCore = factory();
+    root.PromptometerCore = factory();
   }
 }(typeof self !== 'undefined' ? self : this, function () {
+
 
   const VERSION = '1.0.0';
 

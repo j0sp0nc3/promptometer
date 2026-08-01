@@ -1,13 +1,13 @@
-# PromptQuill
+# Promptometer
 
 **The multi-language prompt evaluation engine.**
 
-PromptQuill scores prompts across 8 dimensions, detects anti-patterns, runs
+Promptometer scores prompts across 8 dimensions, detects anti-patterns, runs
 adversarial security tests, and produces structured rewrites. It powers the
 [PromptForge](https://github.com/j0sp0nc3/promptforge) web app, but ships as
 a standalone, zero-dependency library usable from **any** language.
 
-## Why PromptQuill?
+## Why Promptometer?
 
 - **Zero dependencies.** No npm tree, no pip requirements. Drop in and go.
 - **Multi-language parity.** The JS and Python ports return the exact same
@@ -22,11 +22,11 @@ a standalone, zero-dependency library usable from **any** language.
 ### JavaScript / Node
 
 ```bash
-npm install promptquill-core
+npm install promptometer-core
 ```
 
 ```js
-const { analyze } = require('promptquill-core');
+const { analyze } = require('promptometer-core');
 const result = analyze('You are a Python expert. Review this code and output JSON.');
 console.log(result.overallScore);  // 0–100
 ```
@@ -34,11 +34,11 @@ console.log(result.overallScore);  // 0–100
 ### Python
 
 ```bash
-pip install promptquill-core
+pip install promptometer-core
 ```
 
 ```python
-from promptquill_core import analyze
+from promptometer_core import analyze
 result = analyze('You are a Python expert. Review this code and output JSON.')
 print(result['overallScore'])  # 0–100
 ```
@@ -103,9 +103,9 @@ weight of each dimension accordingly.
 promptquill/
 ├── packages/
 │   └── core/                  # The engine, publishable to npm and PyPI
-│       ├── promptquill-core.js     # JS (UMD/ESM/CJS)
-│       ├── promptquill_core.py     # Python (stdlib only)
-│       ├── promptquill-rules.json  # Declarative weights
+│       ├── promptometer-core.js     # JS (UMD/ESM/CJS)
+│       ├── promptometer_core.py     # Python (stdlib only)
+│       ├── promptometer-rules.json  # Declarative weights
 │       ├── package.json            # npm manifest
 │       ├── pyproject.toml          # PyPI manifest
 │       └── README.md               # API docs + usage examples
@@ -123,7 +123,7 @@ npm login          # one-time, with your npm account
 npm publish --access public
 ```
 
-This publishes `promptquill-core` to the public registry. The `files` field
+This publishes `promptometer-core` to the public registry. The `files` field
 in `package.json` ensures only the JS + rules + README ship (no Python files).
 
 ### PyPI (Python)
@@ -136,7 +136,7 @@ twine upload dist/*
 ```
 
 This builds a wheel + sdist from `pyproject.toml` and uploads
-`promptquill-core` to PyPI.
+`promptometer-core` to PyPI.
 
 ## Related
 
