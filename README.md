@@ -113,6 +113,31 @@ promptquill/
 └── README.md                  # This file
 ```
 
+## Publishing (for maintainers)
+
+### npm (JS)
+
+```bash
+cd packages/core
+npm login          # one-time, with your npm account
+npm publish --access public
+```
+
+This publishes `promptquill-core` to the public registry. The `files` field
+in `package.json` ensures only the JS + rules + README ship (no Python files).
+
+### PyPI (Python)
+
+```bash
+cd packages/core
+pip install build twine
+python -m build
+twine upload dist/*
+```
+
+This builds a wheel + sdist from `pyproject.toml` and uploads
+`promptquill-core` to PyPI.
+
 ## Related
 
 - **[PromptForge](https://github.com/j0sp0nc3/promptforge)** — the full web
