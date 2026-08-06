@@ -26,7 +26,7 @@
   "homepage": "https://github.com/j0sp0nc3/promptometer#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/j0sp0nc3/promptometer.git",
+    "url": "git+https://github.com/j0sp0nc3/promptometer.git",
     "directory": "packages/core"
   },
   "bugs": {
