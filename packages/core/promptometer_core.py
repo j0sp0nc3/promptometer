@@ -122,34 +122,36 @@ class PromptometerCore:
         weights = cls._weights_for(prompt_type)
 
         # Dimensions now include findings + suggestions (richer contract).
+        is_ultra_short = word_count < 3
+
         dimensions = {
             "clarity": {
-                "score": min(100, (70 if word_count > 15 else 40) + (15 if signals["roleAssignment"] else 0)),
-                "findings": [] if word_count > 15 else ["El prompt es muy breve."],
+                "score": 20 if is_ultra_short else min(100, (70 if word_count > 15 else 40) + (15 if signals["roleAssignment"] else 0)),
+                "findings": [] if word_count > 15 else ["El prompt es demasiado breve o un saludo simple."],
                 "suggestions": [] if word_count > 15 else ["Añade contexto y objetivo."],
             },
             "specificity": {
-                "score": min(100, 50 + (30 if signals["hasNumericConstraint"] else 0) + (20 if signals["requestsOutputFormat"] else 0)),
+                "score": 20 if is_ultra_short else min(100, 50 + (30 if signals["hasNumericConstraint"] else 0) + (20 if signals["requestsOutputFormat"] else 0)),
                 "findings": ["Define restricciones cuantitativas."] if not signals["hasNumericConstraint"] else [],
                 "suggestions": ["Añade cifras con unidades (ej. \"5 ítems\")."] if not signals["hasNumericConstraint"] else [],
             },
             "structure": {
-                "score": min(100, 40 + (35 if signals["hasXMLTags"] else 0)),
+                "score": 30 if is_ultra_short else min(100, 40 + (35 if signals["hasXMLTags"] else 0)),
                 "findings": ["Usa etiquetas XML o markdown para estructurar."] if not signals["hasXMLTags"] else [],
                 "suggestions": [],
             },
             "robustness": {
-                "score": min(100, 40 + (40 if signals["errorHandling"] else 0)),
+                "score": 30 if is_ultra_short else min(100, 40 + (40 if signals["errorHandling"] else 0)),
                 "findings": [] if signals["errorHandling"] else ["Sin manejo de errores visible."],
                 "suggestions": [] if signals["errorHandling"] else ["Indica qué hacer ante entradas inválidas."],
             },
             "context": {
-                "score": min(100, 45 + (40 if signals["roleWithDomain"] else 20 if signals["roleAssignment"] else 0)),
+                "score": 20 if is_ultra_short else min(100, 45 + (40 if signals["roleWithDomain"] else 20 if signals["roleAssignment"] else 0)),
                 "findings": [] if signals["roleAssignment"] else ["No se define un rol."],
                 "suggestions": [] if signals["roleAssignment"] else ["Asigna un rol con dominio."],
             },
             "outputFormat": {
-                "score": min(100, 85 if signals["requestsOutputFormat"] else 35),
+                "score": 25 if is_ultra_short else min(100, 85 if signals["requestsOutputFormat"] else 35),
                 "findings": [] if signals["requestsOutputFormat"] else ["Sin formato de salida explícito."],
                 "suggestions": [] if signals["requestsOutputFormat"] else ["Pide \"responde en JSON\" u otro formato."],
             },
@@ -164,6 +166,7 @@ class PromptometerCore:
                 "suggestions": [] if signals["antiHallucination"] else ["Añade \"no inventes datos\" o \"cita fuentes\"."],
             },
         }
+
 
         overall_score = round(sum(dimensions[dim]["score"] * w for dim, w in weights.items()))
         overall_score = max(0, min(100, overall_score))

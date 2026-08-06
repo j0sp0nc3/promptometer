@@ -125,34 +125,36 @@
       const promptType = Signals.inferType(signals);
       const weights = Signals.weightsFor(promptType);
 
+      const isUltraShort = wordCount < 3;
+
       const dimensions = {
         clarity: {
-          score: Math.min(100, (wordCount > 15 ? 70 : 40) + (signals.roleAssignment ? 15 : 0)),
-          findings: wordCount > 15 ? [] : ['El prompt es muy breve.'],
+          score: isUltraShort ? 20 : Math.min(100, (wordCount > 15 ? 70 : 40) + (signals.roleAssignment ? 15 : 0)),
+          findings: wordCount > 15 ? [] : ['El prompt es demasiado breve o un saludo simple.'],
           suggestions: wordCount > 15 ? [] : ['Añade contexto y objetivo.'],
         },
         specificity: {
-          score: Math.min(100, 50 + (signals.hasNumericConstraint ? 30 : 0) + (signals.requestsOutputFormat ? 20 : 0)),
+          score: isUltraShort ? 20 : Math.min(100, 50 + (signals.hasNumericConstraint ? 30 : 0) + (signals.requestsOutputFormat ? 20 : 0)),
           findings: signals.hasNumericConstraint ? [] : ['Define restricciones cuantitativas.'],
           suggestions: signals.hasNumericConstraint ? [] : ['Añade cifras con unidades (ej. "5 ítems").'],
         },
         structure: {
-          score: Math.min(100, 40 + (signals.hasXMLTags ? 35 : 0)),
+          score: isUltraShort ? 30 : Math.min(100, 40 + (signals.hasXMLTags ? 35 : 0)),
           findings: signals.hasXMLTags ? [] : ['Usa etiquetas XML o markdown para estructurar.'],
           suggestions: [],
         },
         robustness: {
-          score: Math.min(100, 40 + (signals.errorHandling ? 40 : 0)),
+          score: isUltraShort ? 30 : Math.min(100, 40 + (signals.errorHandling ? 40 : 0)),
           findings: signals.errorHandling ? [] : ['Sin manejo de errores visible.'],
           suggestions: signals.errorHandling ? [] : ['Indica qué hacer ante entradas inválidas.'],
         },
         context: {
-          score: Math.min(100, 45 + (signals.roleWithDomain ? 40 : signals.roleAssignment ? 20 : 0)),
+          score: isUltraShort ? 20 : Math.min(100, 45 + (signals.roleWithDomain ? 40 : signals.roleAssignment ? 20 : 0)),
           findings: signals.roleAssignment ? [] : ['No se define un rol.'],
           suggestions: signals.roleAssignment ? [] : ['Asigna un rol con dominio.'],
         },
         outputFormat: {
-          score: Math.min(100, signals.requestsOutputFormat ? 85 : 35),
+          score: isUltraShort ? 25 : Math.min(100, signals.requestsOutputFormat ? 85 : 35),
           findings: signals.requestsOutputFormat ? [] : ['Sin formato de salida explícito.'],
           suggestions: signals.requestsOutputFormat ? [] : ['Pide "responde en JSON" u otro formato.'],
         },
@@ -167,6 +169,7 @@
           suggestions: signals.antiHallucination ? [] : ['Añade "no inventes datos" o "cita fuentes".'],
         },
       };
+
 
       let overallScore = 0;
       for (const [dim, w] of Object.entries(weights)) {
