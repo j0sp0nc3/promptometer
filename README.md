@@ -4,7 +4,7 @@
 
 Promptometer scores prompts across 8 dimensions, detects anti-patterns, runs
 adversarial security tests, and produces structured rewrites. It powers the
-[PromptForge](https://github.com/j0sp0nc3/promptforge) web app, but ships as
+[Promptometer](https://github.com/j0sp0nc3/promptometer) web app, but ships as
 a standalone, zero-dependency library usable from **any** language.
 
 ## Why Promptometer?
@@ -46,7 +46,7 @@ print(result['overallScore'])  # 0–100
 ### Any language (REST)
 
 ```bash
-# Run the microservice (from the promptforge repo)
+# Run the microservice (from the promptometer repo)
 node server.js
 
 # POST from anywhere — C#, Java, Go, Rust, PHP, Ruby, curl
@@ -100,7 +100,7 @@ weight of each dimension accordingly.
 ## Repository structure
 
 ```
-promptquill/
+promptometer/
 ├── packages/
 │   └── core/                  # The engine, publishable to npm and PyPI
 │       ├── promptometer-core.js     # JS (UMD/ESM/CJS)
@@ -140,7 +140,7 @@ This builds a wheel + sdist from `pyproject.toml` and uploads
 
 ## Related
 
-- **[PromptForge](https://github.com/j0sp0nc3/promptforge)** — the full web
+- **[Promptometer](https://github.com/j0sp0nc3/promptometer)** — the full web
   application (30+ anti-patterns, 13 adversarial tests, i18n ES/EN,
   templates, history). This library is a simplified, dependency-free subset
   of that engine.
