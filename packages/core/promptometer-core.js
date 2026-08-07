@@ -47,9 +47,17 @@
       const roleAssignment = /\b(you are (an?|the)|act as (an?|the)|eres un[ao]?|actúa como un[oa]?|your role is|tu rol es)\b/i.test(lower);
       const roleWithDomain = roleAssignment && /\b(expert in|specialist in|experto en|especialista en)\b/i.test(lower);
 
-      const errorHandling = /\b(if.{0,20}(invalid|missing|empty)|si.{0,20}(inválid|faltante|vacío)|fallback|default value|manejo de error)\b/i.test(lower);
-      const antiHallucination = /\b(don'?t make up|no inventes|do not hallucinate|no alucines|cite your sources?|cita tus fuentes)\b/i.test(lower);
-      const scopeLimit = /\b(scope|alcance|only (respond|answer)|solo (responde|contesta)|limited to|limitado a)\b/i.test(lower);
+      const errorHandling = /\b(if.{0,20}(invalid|missing|empty)|si.{0,20}(inválid|faltante|vacío)|fallback|default value|manejo de error)\b/i.test(lower)
+                         || /<(manejo_errores|error_handling|fallback)[^>]*>/i.test(prompt)
+                         || /\b(si el texto (de entrada )?(no contiene|no incluye|no tiene)|if.{0,10}(text|input).{0,10}(does not contain|has no|lacks))\b/i.test(lower)
+                         || /\b(responde exactamente con|respond exactly with)\b/i.test(lower);
+      const antiHallucination = /\b(don'?t make up|no inventes|do not hallucinate|no alucines|cite your sources?|cita tus fuentes)\b/i.test(lower)
+                             || /\b(cita.{0,20}(únicamente|solo|solamente).{0,30}(texto|original|documento|fuente)|only.{0,20}(cite|use|include).{0,20}(text|source|document))\b/i.test(lower)
+                             || /\b(no asumas|do not assume|don'?t assume|datos no especificados|unspecified data)\b/i.test(lower)
+                             || /\b(únicamente datos (presentes|del|en el)|only data (present|from|in the))\b/i.test(lower);
+      const scopeLimit = /\b(scope|alcance|only (respond|answer)|solo (responde|contesta)|limited to|limitado a)\b/i.test(lower)
+                      || /\b(únicamente con|respond.{0,10}only with|responde.{0,10}(únicamente|exclusivamente|solo) con|no incluyas.{0,40}fuera (del|de el)|do not include.{0,40}outside)\b/i.test(lower)
+                      || /\bÚNICAMENTE\b/.test(prompt);
 
       return {
         wordCount,
@@ -67,17 +75,27 @@
       };
     },
 
-    inferType(signals) {
-      if (signals.hasFewShot) return 'few-shot';
+    inferType(signals, prompt) {
+      if (signals.hasFewShot) {
+        // Check if it's an extraction prompt masquerading as few-shot
+        if (prompt) {
+          const lower = prompt.toLowerCase();
+          const hasJsonSchema = /\bjson\b/i.test(lower) && (signals.hasXMLTags || false);
+          const hasExtractionCue = /\b(extract|extrae|extraer|extraction|extracción|structured data|datos estructurados|schema|esquema)\b/i.test(lower);
+          if (hasJsonSchema && hasExtractionCue) return 'extraction';
+        }
+        return 'few-shot';
+      }
       if (signals.hasStepByStep || signals.hasTreeOfThought) return 'chainOfThought';
       if (signals.roleAssignment && signals.wordCount > 40) return 'system';
       return 'general';
     },
 
     weightsFor(type) {
-      if (type === 'system')       return { clarity: 0.15, specificity: 0.15, structure: 0.15, robustness: 0.15, context: 0.15, outputFormat: 0.10, chainOfThought: 0.05, safety: 0.10 };
-      if (type === 'few-shot')     return { clarity: 0.15, specificity: 0.20, structure: 0.15, robustness: 0.10, context: 0.10, outputFormat: 0.20, chainOfThought: 0.05, safety: 0.05 };
+      if (type === 'system')         return { clarity: 0.15, specificity: 0.15, structure: 0.15, robustness: 0.15, context: 0.15, outputFormat: 0.10, chainOfThought: 0.05, safety: 0.10 };
+      if (type === 'few-shot')       return { clarity: 0.15, specificity: 0.20, structure: 0.15, robustness: 0.10, context: 0.10, outputFormat: 0.20, chainOfThought: 0.05, safety: 0.05 };
       if (type === 'chainOfThought') return { clarity: 0.15, specificity: 0.15, structure: 0.15, robustness: 0.10, context: 0.10, outputFormat: 0.10, chainOfThought: 0.20, safety: 0.05 };
+      if (type === 'extraction')     return { clarity: 0.12, specificity: 0.14, structure: 0.18, robustness: 0.18, context: 0.08, outputFormat: 0.20, chainOfThought: 0.02, safety: 0.08 };
       return { clarity: 0.18, specificity: 0.15, structure: 0.13, robustness: 0.12, context: 0.12, outputFormat: 0.12, chainOfThought: 0.10, safety: 0.08 };
     },
   };
@@ -122,7 +140,7 @@
       const signals = Signals.extract(trimmed);
       const wordCount = signals.wordCount;
       const charCount = trimmed.length;
-      const promptType = Signals.inferType(signals);
+      const promptType = Signals.inferType(signals, trimmed);
       const weights = Signals.weightsFor(promptType);
 
       const isUltraShort = wordCount < 3;
