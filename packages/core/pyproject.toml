@@ -2,6 +2,7 @@
 name = "promptometer-core"
 version = "1.3.0"
 description = "Zero-dependency prompt evaluation engine — scores, anti-patterns, adversarial tests, rewrites and agent task assessment."
+readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 authors = [{ name = "j0sp0nc3" }]
