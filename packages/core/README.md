@@ -1,99 +1,48 @@
-# Promptometer Core
+# promptometer-core
 
-The reusable engine that powers Promptometer — a prompt-analysis toolkit that
-scores prompts across 8 dimensions, detects anti-patterns, runs adversarial
-tests and produces improved rewrites.
+Zero-dependency prompt evaluation engine with JS/Python parity (0 ms, 0 tokens, no network).
 
-This folder is designed to be **extractable as an independent library**
-(`packages/core/` in the monorepo) so any application — web, CLI,
-server, or third-party tool — can consume the same evaluation engine.
+- `analyze(prompt)` — 8-dimension score, grade and anti-patterns for **designed prompts** (system prompts, templates).
+- `assess(prompt, context?)` — evaluates the **work request handed to an agent** (typed by a person or emitted by an orchestrator). Harness-agnostic: the host passes context as data and `assess()` never touches the disk. *(experimental, v1.2.0)*
+- `improve(prompt)`, `runAdversarial(prompt)`, `detectPatterns(prompt)`.
 
-## Files
-
-| File | Role |
-|------|------|
-| `promptometer-core.js` | Universal JS library (UMD / ESM / CommonJS). Works in browsers, Node, Deno, Bun. **Zero dependencies.** |
-| `promptometer_core.py` | Native Python port. **Zero dependencies** (stdlib only). Drop into any Python project. |
-| `promptometer-rules.json` | Declarative weights & simple rule definitions. Intended as a shared config surface so weights can be tuned in one place. |
-
-## Output contract (identical across JS and Python)
-
-Both implementations return the **same camelCase shape**:
-
-```js
-{
-  overallScore: 46,            // 0–100
-  grade: "D",                  // A | B | C | D | F
-  wordCount: 12,
-  charCount: 72,
-  promptType: "general",       // general | system | few-shot | chainOfThought
-  dimensions: {
-    clarity:        { score, findings: [...], suggestions: [...] },
-    specificity:    { score, findings, suggestions },
-    structure:      { ... },
-    robustness:     { ... },
-    context:        { ... },
-    outputFormat:   { ... },
-    chainOfThought: { ... },
-    safety:         { ... }
-  },
-  antiPatterns: [ { id, name, severity, dimension, suggestion }, ... ],
-  strengths:    [ ... ],
-  suggestions:  [ { priority, title, description }, ... ]
-}
-```
-
-## Usage
-
-### JavaScript / Node
-
-```js
-const PromptometerCore = require('promptometer-core');
-
-const analysis   = PromptometerCore.analyze("Your prompt here");
-const improved   = PromptometerCore.improve("Your prompt here", analysis);
-const adversarial = PromptometerCore.runAdversarial("Your prompt here");
-
-console.log(analysis.overallScore);   // 46
-console.log(analysis.dimensions);     // { clarity: {…}, specificity: {…}, ... }
-```
-
-### Python
-
-```python
-import promptometer_core as pf
-
-analysis    = pf.analyze("Your prompt here")
-improved    = pf.improve("Your prompt here", analysis)
-adversarial = pf.run_adversarial("Your prompt here")
-
-print(analysis["overallScore"])       # 46
-print(analysis["dimensions"])         # { "clarity": {...}, ... }
-```
-
-### Any language via REST API
-
-Start the server (`node server.js` from the project root) and POST:
+## Install
 
 ```bash
-curl -X POST http://localhost:3000/api/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"prompt":"Your prompt here"}'
+npm install promptometer-core      # JS (browser, Node, Deno, Bun)
+pip install -e packages/core       # Python, from this repo (adds the `promptometer` CLI)
 ```
 
-Works from C#, Java, Go, Rust, PHP, Ruby, anything that speaks HTTP+JSON.
+## `assess()`
+
+```js
+const { assess } = require('promptometer-core');
+
+const r = assess('edita auth/inexistente.py para validar el token', {
+  known_files: ['src/auth.py', 'js/app.js'], // optional workspace index (e.g. `git ls-files`)
+  turn: 1, is_voice: false, lang: 'es',      // all optional
+});
+r.quality;          // vague | moderate | specific | exemplary  (+ r.score 0-100)
+r.targets;          // { mentioned, verified, missing, modules } — grounding against known_files
+r.exploration_risk; // low | medium | high — qualitative blast radius
+r.scope;            // { files, objectives, suggest_split } — anti mega-prompt
+r.recommended_tier; // cheap | standard | deep — map it to your own models
+r.correction;       // turn 2+: drift / correction detected
+r.issues;           // [{ id: 'TA004', severity: 'high', message }] — stable ids TA000-TA010
+r.tip; r.scaffold;  // one coaching tip + fill-in template when score < 50 ('' otherwise)
+```
+
+Python exposes the same function and output (`import promptometer_core as pc; pc.assess(...)`); keys come in both `snake_case` and `camelCase`.
+
+## CLI (JSON on stdout)
+
+```bash
+node promptometer-core.js assess "agrega tests a analyzer" --files-from git
+python promptometer_core.py assess "reviértelo, te equivocaste" --turn 2 --lang en --compact
+```
 
 ## Parity
 
-The JS and Python ports are kept in sync. A cross-test verifies that the same
-prompt yields the same `overallScore`, `grade`, `promptType`, per-dimension
-scores, findings, anti-patterns and suggestions in both languages.
+`fixtures/assess-cases.json` is the shared spec. `python test_assess.py` checks Python against it, checks that the regex/message spec embedded in the JS file (`TA_SPEC`) is in sync (`--sync-js` regenerates it) and compares both engines over the fixtures plus a randomized Unicode corpus.
 
-## Scope
-
-This core is a **simplified, dependency-free port** of the full web engine.
-The web app has the complete catalogue:
-30+ anti-patterns, 15 best practices, 13 adversarial tests, full i18n
-(ES/EN). The core packages ship the most impactful subset (5 anti-patterns,
-3 adversarial tests) to keep them small and zero-dep. The weights and signal
-extraction logic are identical, so scores are directly comparable.
+MIT © j0sp0nc3
