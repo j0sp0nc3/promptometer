@@ -3,7 +3,7 @@
 Zero-dependency prompt evaluation engine with JS/Python parity (0 ms, 0 tokens, no network).
 
 - `analyze(prompt)` — 8-dimension score, grade and anti-patterns for **designed prompts** (system prompts, templates).
-- `assess(prompt, context?)` — evaluates the **work request handed to an agent** (typed by a person or emitted by an orchestrator). Harness-agnostic: the host passes context as data and `assess()` never touches the disk. *(experimental, v1.2.0)*
+- `assess(prompt, context?)` — evaluates the **work request handed to an agent** (typed by a person or emitted by an orchestrator). Harness-agnostic: the host passes context as data and `assess()` never touches the disk. *(v1.3.0)*
 - `improve(prompt)`, `runAdversarial(prompt)`, `detectPatterns(prompt)`.
 
 ## Install
